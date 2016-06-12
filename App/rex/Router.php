@@ -1,4 +1,4 @@
-<?php 
+<?php
 namespace rex\router;
 
 use rex\request\Request;
