@@ -2,7 +2,7 @@
 
 namespace rex\builder;
 
-include 'Router.php';
+require 'Router.php';
 
 use rex\router\Router;
 

@@ -26,9 +26,9 @@ Example
 ```
 ```PHP
 //index.php
-include 'App/rex/Builder.php';
-include 'App/rex/BuildModel.php';
-include 'App/routes/User.php';
+require 'App/rex/Builder.php';
+require 'App/rex/BuildModel.php';
+require 'App/routes/User.php';
 
 use \rex\builder\Builder;
 use \rex\builder\model\BuildModel;
@@ -42,7 +42,7 @@ Builder::collector(array(
 //Class User
 namespace api\user;
 
-include(__DIR__ . '/../rex/Route.php');
+require(__DIR__ . '/../rex/Route.php');
 require __DIR__ . '/../rex/Request.php';
 
 use rex\request\Request;
