@@ -3,6 +3,7 @@ Rex PHP
 Simple framework for REST
 
 Simple use!
+
 Creating interfaces
 ```PHP
 RexBuilder::collector(array(
