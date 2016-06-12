@@ -6,7 +6,7 @@ include 'Router.php';
 
 use rex\router\Router;
 
-class Builder {
+class RexBuilder {
     static function collector($array) {
         $router = new Router();
         foreach ($array as $key => $val) {

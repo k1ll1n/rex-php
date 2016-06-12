@@ -5,7 +5,7 @@ Simple framework for REST
 Simple use!
 Creating interfaces
 ```PHP
-Builder::collector(array(
+RexBuilder::collector(array(
     new BuildModel('HTTP_METHOD', 'PATH', YOUR_CLASS)
 ));
 ```
