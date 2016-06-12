@@ -1,14 +1,9 @@
-<?php namespace simplerest\router;
+<?php 
+namespace rex\router;
 
-use simplerest\request\Request;
-use simplerest\route\Route;
+use rex\request\Request;
+use rex\route\Route;
 
-/**
- * Created by PhpStorm.
- * User: madlax
- * Date: 09.06.16
- * Time: 22:11
- */
 class Router {
     private $routes = array();
     private $method = '';

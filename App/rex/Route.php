@@ -1,8 +1,8 @@
 <?php
 
-namespace simplerest\route;
+namespace rex\route;
 
-use simplerest\request\Request;
+use rex\request\Request;
 
 interface Route {
     public function handle(Request $request);

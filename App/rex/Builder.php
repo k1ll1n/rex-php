@@ -1,11 +1,10 @@
 <?php
 
-
-namespace simplerest\builder;
+namespace rex\builder;
 
 include 'Router.php';
 
-use simplerest\router\Router;
+use rex\router\Router;
 
 class Builder {
     static function collector($array) {

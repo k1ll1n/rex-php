@@ -1,12 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: madlax
- * Date: 12.06.16
- * Time: 22:15
- */
 
-namespace simplerest\request;
+namespace rex\request;
 
 
 class Request {

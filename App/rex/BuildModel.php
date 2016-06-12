@@ -1,14 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: madlax
- * Date: 12.06.16
- * Time: 0:57
- */
 
-namespace simplerest\builder\model;
+namespace rex\builder\model;
 
-use simplerest\route\Route;
+use rex\route\Route;
 
 class BuildModel {
     
