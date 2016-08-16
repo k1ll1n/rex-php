@@ -38,7 +38,13 @@ class Router {
 
                 break;
             } else {
-                //TODO
+
+	            echo json_encode(array(
+	            	'error' => 1,
+		            'message' => 'Данный интерфейс не найден!',
+		            'interface' => $url_path
+	            ));
+	            return;
             }
         }
     }
