@@ -47,20 +47,18 @@ class User implements Route {
 ```
 Result
 ```
-object(simplerest\request\Request)#4 (3) {
-  ["params":"simplerest\request\Request":private]=>
+object(Request)#6 (3) {
+  ["params":"Request":private]=>
   array(2) {
     ["groupId"]=>
     string(2) "12"
     ["userId"]=>
     string(1) "2"
   }
-  ["query":"simplerest\request\Request":private]=>
-  array(1) {
-    ["foo"]=>
-    string(3) "bar"
+  ["query":"Request":private]=>
+  array(0) {
   }
-  ["data":"simplerest\request\Request":private]=>
+  ["data":"Request":private]=>
   array(0) {
   }
 }
@@ -68,9 +66,12 @@ object(simplerest\request\Request)#4 (3) {
 Retrieving data
 ```PHP
 public function handle(Request $request) {
-        $request->getParams();
-        $request->getQuery();
-        $request->getData();
+        $request->getParamsArray();
+        $request->getQueryArray();
+        $request->getDataArray();
+        $request->getParams('name_item_element');
+        $request->getQuery('name_item_element');
+        $request->getData('name_item_element');
 }
 ```
 Next, you treat them as you need.
