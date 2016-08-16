@@ -1,12 +1,10 @@
 <?php
 
-require_once 'Request.php';
-
 class Router {
     private $routes = array();
     private $method = '';
 
-    function get($method, $pattern, Route $route) {
+    function setInterfaces($method, $pattern, Route $route) {
         $this->method = $method;
         $this->makeArray();
         array_push($this->routes[$method], array(
@@ -30,22 +28,19 @@ class Router {
     
     function init() {
         $url_path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        foreach ($this->routes as $key => $val) {
-            foreach ($this->routes[$key] as $map) {
-                if (preg_match($this->makePattern($map['pattern']), $url_path, $matches)) {
-                    $this->setParams(
-                        $map['class'],
-                        $this->getVariables($map['pattern']),
-                        $this->getValues($url_path, $map['pattern'])
-                    );
+        foreach ($this->routes[$_SERVER['REQUEST_METHOD']] as $map) {
+            if (preg_match($this->makePattern($map['pattern']), $url_path, $matches)) {
+                $this->setParams(
+                    $map['class'],
+                    $this->getVariables($map['pattern']),
+                    $this->getValues($url_path, $map['pattern'])
+                );
 
-                    break;
-                } else {
-                    //TODO
-                }
+                break;
+            } else {
+                //TODO
             }
         }
-
     }
 
     private function setParams(Route $route, $variables, $values) {
