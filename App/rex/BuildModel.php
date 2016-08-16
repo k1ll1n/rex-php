@@ -1,9 +1,5 @@
 <?php
 
-namespace rex\builder\model;
-
-use rex\route\Route;
-
 class BuildModel {
     
     private $interfaces;

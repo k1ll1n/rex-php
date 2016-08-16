@@ -1,6 +1,4 @@
-Rex PHP
-
-Simple framework for REST
+Rex PHP simple framework for REST
 
 Simple use!
 
@@ -31,23 +29,15 @@ require 'App/rex/Builder.php';
 require 'App/rex/BuildModel.php';
 require 'App/routes/User.php';
 
-use \rex\builder\Builder;
-use \rex\builder\model\BuildModel;
-use api\user\User;
-
 Builder::collector(array(
     new BuildModel('GET', '/users/:groupId/user/:userId', new User())
 ));
 ```
 ```PHP
 //Class User
-namespace api\user;
 
-require(__DIR__ . '/../rex/Route.php');
+require __DIR__ . '/../rex/Route.php';
 require __DIR__ . '/../rex/Request.php';
-
-use rex\request\Request;
-use rex\route\Route;
 
 class User implements Route {
     public function handle(Request $request) {

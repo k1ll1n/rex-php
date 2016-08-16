@@ -1,8 +1,6 @@
 <?php
-namespace rex\router;
 
-use rex\request\Request;
-use rex\route\Route;
+require_once 'Request.php';
 
 class Router {
     private $routes = array();
@@ -32,40 +30,40 @@ class Router {
     
     function init() {
         $url_path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        
-        foreach ($this->routes[$this->method] as $map) {
-            if (preg_match($this->makePattern($map['pattern']), $url_path, $matches)) {
-                $this->setParams(
-                    $map['class'], 
-                    $this->getVariables($map['pattern']), 
-                    $this->getValues($url_path, $map['pattern'])
-                );
-                
-                break;
+        foreach ($this->routes as $key => $val) {
+            foreach ($this->routes[$key] as $map) {
+                if (preg_match($this->makePattern($map['pattern']), $url_path, $matches)) {
+                    $this->setParams(
+                        $map['class'],
+                        $this->getVariables($map['pattern']),
+                        $this->getValues($url_path, $map['pattern'])
+                    );
+
+                    break;
+                } else {
+                    //TODO
+                }
             }
         }
+
     }
 
     private function setParams(Route $route, $variables, $values) {
-        $request = new Request();
         $params = array();
         foreach ($variables as $key => $val) {
             $params[$val] = $values[$key];
         }
-        $request->setParams($params);
-        
-        $request->setQuery($this->setRequestQuery());
-
+        $data = null;
         switch ($this->method) {
             case 'POST': {
-                $request->setData($_POST);
+                $data = $_POST;
                 break;
             }
             default:
-                $request->setData($this->setRequestData());
+                $data = $this->setRequestData();
         }
 
-        $route->handle($request);
+        $route->handle(new Request($params, $this->setRequestQuery(), $data));
     }
 
     private function setRequestQuery() {
@@ -101,7 +99,7 @@ class Router {
             return str_replace(':', '', $matches);
         }
         
-        return 0;
+        throw new Exception('Unable to get variables from a pattern!');
     }
     
     private function getValues($url, $pattern) {
@@ -112,7 +110,7 @@ class Router {
             array_shift($matches);
             return $matches;
         }
-        
-        return 0;
+
+        throw new Exception('Unable to get data from the url!');
     }
 }
