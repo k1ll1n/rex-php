@@ -45,7 +45,7 @@ require_once 'rex/utils/Autoloader.php';
 class User implements RexHandlerInterface {
     
     public function handle(RexRequest $request) {
-        $this->d($request);
+        $this->var_dump($request);
     }
 }
 ```
