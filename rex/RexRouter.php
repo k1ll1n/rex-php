@@ -1,21 +1,26 @@
 <?php
 
-class Router {
-    private $routes = array();
+namespace rex;
+
+use Exception;
+
+
+class RexRouter {
+    private $routes = [];
     private $method = '';
 
-    function setInterfaces($method, $pattern, Route $route) {
+    function setInterfaces($method, $pattern, $handler) {
         $this->method = $method;
         $this->makeArray();
-        array_push($this->routes[$method], array(
+        array_push($this->routes[$method], [
             'pattern'   => $pattern,
-            'class'     => $route
-        ));
+            'class'     => $handler
+        ]);
     }
 
     private function makeArray() {
         if (!array_key_exists($this->method, $this->routes)) {
-            $this->routes[$this->method] = array();
+            $this->routes[$this->method] = [];
         }
     }
 
@@ -26,12 +31,12 @@ class Router {
         return '#'.$pattern.'#';
     }
     
-    function init() {
+	function run() {
         $url_path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         foreach ($this->routes[$_SERVER['REQUEST_METHOD']] as $map) {
             if (preg_match($this->makePattern($map['pattern']), $url_path, $matches)) {
                 $this->setParams(
-                    $map['class'],
+                    new $map['class'](),
                     $this->getVariables($map['pattern']),
                     $this->getValues($url_path, $map['pattern'])
                 );
@@ -49,8 +54,8 @@ class Router {
         }
     }
 
-    private function setParams(Route $route, $variables, $values) {
-        $params = array();
+    private function setParams(RexHandlerInterface $route, $variables, $values) {
+        $params = [];
         foreach ($variables as $key => $val) {
             $params[$val] = $values[$key];
         }
@@ -64,14 +69,14 @@ class Router {
                 $data = $this->setRequestData();
         }
 
-        $route->handle(new Request($params, $this->setRequestQuery(), $data));
+        $route->handle(new RexRequest($params, $this->setRequestQuery(), $data));
     }
 
     private function setRequestQuery() {
-        if ($_SERVER['QUERY_STRING'] == '') return array();
+        if ($_SERVER['QUERY_STRING'] == '') return [];
 
         $dataArray = explode('&', $_SERVER['QUERY_STRING']);
-        $data = array();
+        $data = [];
         foreach ($dataArray as $key => $val) {
             $explode = explode('=', $val);
             $data[$explode[0]] = $explode[1];
@@ -80,10 +85,10 @@ class Router {
     }
 
     private function setRequestData() {
-        if (file_get_contents('php://input') == '') return array();
+        if (file_get_contents('php://input') == '') return [];
 
         $dataArray = explode('&', file_get_contents('php://input'));
-        $data = array();
+        $data = [];
         foreach ($dataArray as $key => $val) {
             $explode = explode('=', $val);
             $data[$explode[0]] = $explode[1];

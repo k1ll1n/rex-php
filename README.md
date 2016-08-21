@@ -4,15 +4,15 @@ Simple use!
 
 Creating interfaces
 ```PHP
-RexBuilder::collector(array(
-    new BuildModel('HTTP_METHOD', 'PATH', YOUR_CLASS)
-));
+RexBuilder::collector([
+	'HTTP_METHOD|PATH' => YourClass::class
+]);
 ```
 
-Treatment your_class
+Treatment YourClass
 ```PHP
-class your_class implements Route {
-    public function handle(Request $request) {
+class YourClass implements RexHandlerInterface {
+    public function handle(RexRequest $request) {
         //your code
     }
 }
@@ -25,40 +25,47 @@ Example
 ```
 ```PHP
 //index.php
-require 'App/rex/Builder.php';
-require 'App/rex/BuildModel.php';
-require 'App/routes/User.php';
+use rex\RexBuilder;
 
-Builder::collector(array(
-    new BuildModel('GET', '/users/:groupId/user/:userId', new User())
-));
+require_once 'rex/utils/Autoloader.php';
+require_once 'App/routes/User.php';
+
+RexBuilder::collector([
+	'GET|/users/:groupId/user/:userId' => User::class,
+	'POST|/users/:groupId/user/:userId' => User::class,
+]);
 ```
 ```PHP
 //Class User
 
-require __DIR__ . '/../rex/Route.php';
-require __DIR__ . '/../rex/Request.php';
+use rex\RexHandlerInterface;
+use rex\RexRequest;
 
-class User implements Route {
-    public function handle(Request $request) {
-        var_dump($request);
+require_once 'rex/utils/Autoloader.php';
+
+class User implements RexHandlerInterface {
+    
+    public function handle(RexRequest $request) {
+        $this->d($request);
     }
 }
 ```
 Result
 ```
-object(Request)#6 (3) {
-  ["params":"Request":private]=>
+object(rex\RexRequest)#3 (3) {
+  ["params":"rex\RexRequest":private]=>
   array(2) {
     ["groupId"]=>
     string(2) "12"
     ["userId"]=>
     string(1) "2"
   }
-  ["query":"Request":private]=>
-  array(0) {
+  ["query":"rex\RexRequest":private]=>
+  array(1) {
+    ["foo"]=>
+    string(3) "bar"
   }
-  ["data":"Request":private]=>
+  ["data":"rex\RexRequest":private]=>
   array(0) {
   }
 }

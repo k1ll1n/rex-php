@@ -1,6 +1,8 @@
 <?php
 
-class Request {
+namespace rex;
+
+class RexRequest {
     private $params;
     private $query;
     private $data;
