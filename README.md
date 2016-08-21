@@ -31,8 +31,7 @@ require_once 'rex/utils/Autoloader.php';
 require_once 'App/routes/User.php';
 
 RexBuilder::collector([
-	'GET|/users/:groupId/user/:userId' => User::class,
-	'POST|/users/:groupId/user/:userId' => User::class,
+	'GET|/users/:groupId/user/:userId' => User::class
 ]);
 ```
 ```PHP
