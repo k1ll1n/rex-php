@@ -45,7 +45,8 @@ require_once 'rex/utils/Autoloader.php';
 class User implements RexHandlerInterface {
     
     public function handle(RexRequest $request) {
-        $this->var_dump($request);
+        var_dump($request);
+        var_dump($request->getQuery('foo'));
     }
 }
 ```
@@ -68,6 +69,7 @@ object(rex\RexRequest)#3 (3) {
   array(0) {
   }
 }
+string(3) "bar"
 ```
 Retrieving data
 ```PHP
@@ -75,7 +77,7 @@ public function handle(Request $request) {
         $request->getParamsArray();
         $request->getQueryArray();
         $request->getDataArray();
-        $request->getParams('name_item_element');
+        $request->getParam('name_item_element');
         $request->getQuery('name_item_element');
         $request->getData('name_item_element');
 }

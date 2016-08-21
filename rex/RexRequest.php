@@ -25,7 +25,7 @@ class RexRequest {
     public function getParamsArray() {
         return $this->params;
     }
-    public function getParams($name) {
+    public function getParam($name) {
         return $this->params[$name];
     }
 
