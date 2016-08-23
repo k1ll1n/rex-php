@@ -3,9 +3,10 @@
 namespace rex;
 
 class RexRequest {
-    private $params;
-    private $query;
-    private $data;
+
+	private $params;
+	private $query;
+	private $data;
 
     /**
      * Request constructor.
@@ -25,7 +26,15 @@ class RexRequest {
     public function getParamsArray() {
         return $this->params;
     }
-    public function getParam($name) {
+
+	/**
+	 * @param $name
+	 * @return mixed
+	 */
+	public function getParam($name = '') {
+		if ($name == '' && count($this->params) != 0) {
+			return $this->getFirstElement($this->params);
+		}
         return $this->params[$name];
     }
 
@@ -35,11 +44,17 @@ class RexRequest {
     public function getQueryArray() {
         return $this->query;
     }
-    
-    public function getQuery($name) {
+
+	/**
+	 * @param $name
+	 * @return mixed
+	 */
+	public function getQuery($name = '') {
+		if ($name == '' && count($this->query) != 0) {
+			return $this->getFirstElement($this->query);
+		}
         return $this->query[$name];
     }
-    
 
     /**
      * @return mixed
@@ -48,7 +63,26 @@ class RexRequest {
         return $this->data;
     }
 
-    public function getData($name) {
+	/**
+	 * @param $name
+	 * @return mixed
+	 */
+	public function getData($name = '') {
+		if ($name == '' && count($this->data) != 0) {
+			return $this->getFirstElement($this->data);
+		}
         return $this->data[$name];
+    }
+
+	/**
+	 * @param $array
+	 * @return null
+	 */
+	private function getFirstElement($array) {
+	    foreach ($array as $key => $val) {
+		    return $val;
+	    }
+
+	    return null;
     }
 }

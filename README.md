@@ -27,7 +27,7 @@ Example
 //index.php
 use rex\RexBuilder;
 
-require_once 'rex/utils/Autoloader.php';
+require_once 'rex/utils/RexClassLoader.php';
 require_once 'App/routes/User.php';
 
 RexBuilder::collector([
@@ -40,7 +40,7 @@ RexBuilder::collector([
 use rex\RexHandlerInterface;
 use rex\RexRequest;
 
-require_once 'rex/utils/Autoloader.php';
+require_once 'rex/utils/RexClassLoader.php';
 
 class User implements RexHandlerInterface {
     

@@ -3,5 +3,10 @@
 namespace rex;
 
 interface RexHandlerInterface {
-    public function handle(RexRequest $request);
+
+	/**
+	 * @param RexRequest $request
+	 * @return mixed
+	 */
+	public function handle(RexRequest $request);
 }

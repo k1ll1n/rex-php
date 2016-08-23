@@ -3,34 +3,46 @@
 namespace rex;
 
 use Exception;
+use rex\utils\RexException;
 
 
 class RexRouter {
     private $routes = [];
     private $method = '';
 
-    function setInterfaces($method, $pattern, $handler) {
+	/**
+	 * @param $method - http method
+	 * @param $pattern - special format url path
+	 * @param $handler - YourClass::class
+	 */
+	function setInterfaces($method, $pattern, $handler) {
         $this->method = $method;
         $this->makeArray();
-        array_push($this->routes[$method], [
-            'pattern'   => $pattern,
-            'class'     => $handler
-        ]);
+        array_push($this->routes[$method],
+	        ['pattern'   => $pattern,
+            'class'     => $handler]
+        );
     }
 
-    private function makeArray() {
+	/**
+	 *
+	 */
+	private function makeArray() {
         if (!array_key_exists($this->method, $this->routes)) {
             $this->routes[$this->method] = [];
         }
     }
 
-    private function makePattern($pattern) {
-        $p = '#\:\w{1,}#';
-        $pattern = preg_replace($p, '(\d{1,})', $pattern);
-        $pattern = str_replace('/', '\/', $pattern);
-        return '#'.$pattern.'#';
+	/**
+	 * @param $pattern
+	 * @return string
+	 *
+	 * Преобразование урл пути в регулярное выражение
+	 */
+	private function makePattern($pattern) {
+        return '#'.str_replace('/', '\/', preg_replace('#\:\w{1,}#', '(\d{1,})', $pattern)).'#';
     }
-    
+
 	function run() {
         $url_path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         foreach ($this->routes[$_SERVER['REQUEST_METHOD']] as $map) {
@@ -54,7 +66,12 @@ class RexRouter {
         }
     }
 
-    private function setParams(RexHandlerInterface $route, $variables, $values) {
+	/**
+	 * @param RexHandlerInterface $route
+	 * @param $variables
+	 * @param $values
+	 */
+	private function setParams(RexHandlerInterface $route, $variables, $values) {
         $params = [];
         foreach ($variables as $key => $val) {
             $params[$val] = $values[$key];
@@ -72,7 +89,10 @@ class RexRouter {
         $route->handle(new RexRequest($params, $this->setRequestQuery(), $data));
     }
 
-    private function setRequestQuery() {
+	/**
+	 * @return array
+	 */
+	private function setRequestQuery() {
         if ($_SERVER['QUERY_STRING'] == '') return [];
 
         $dataArray = explode('&', $_SERVER['QUERY_STRING']);
@@ -84,7 +104,12 @@ class RexRouter {
         return $data;
     }
 
-    private function setRequestData() {
+	/**
+	 * @return array
+	 *
+	 * Processing other http methods, which do not have their own global variables such as PUT, DELETE, etc.
+	 */
+	private function setRequestData() {
         if (file_get_contents('php://input') == '') return [];
 
         $dataArray = explode('&', file_get_contents('php://input'));
@@ -96,7 +121,12 @@ class RexRouter {
         return $data;
     }
 
-    private function getVariables($pattern) {
+	/**
+	 * @param $pattern
+	 * @return mixed
+	 * @throws Exception
+	 */
+	private function getVariables($pattern) {
         $template = preg_replace('#\:\w{1,}#', '(\:\w{1,})', $pattern);
         $template = str_replace('/', '\/', $template);
         $template = '#'.$template.'#';
@@ -104,11 +134,16 @@ class RexRouter {
             array_shift($matches);
             return str_replace(':', '', $matches);
         }
-        
-        throw new Exception('Unable to get variables from a pattern!');
+        RexException::showException('Unable to get variables from a pattern!');
     }
-    
-    private function getValues($url, $pattern) {
+
+	/**
+	 * @param $url
+	 * @param $pattern
+	 * @return mixed
+	 * @throws Exception
+	 */
+	private function getValues($url, $pattern) {
         $pattern = preg_replace('#\:\w{1,}#', '(\d{1,})', $pattern);
         $pattern = str_replace('/', '\/', $pattern);
         $pattern = '#'.$pattern.'#';
@@ -117,6 +152,6 @@ class RexRouter {
             return $matches;
         }
 
-        throw new Exception('Unable to get data from the url!');
+        RexException::showException('Unable to get data from the url!');
     }
 }
