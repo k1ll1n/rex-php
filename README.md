@@ -74,12 +74,16 @@ string(3) "bar"
 Retrieving data
 ```PHP
 public function handle(Request $request) {
-        $request->getParamsArray();
-        $request->getQueryArray();
-        $request->getDataArray();
-        $request->getParam('name_item_element');
-        $request->getQuery('name_item_element');
-        $request->getData('name_item_element');
+        $request->params();
+        $request->params('name_item_element');
+        $request->queryParams();
+        $request->queryParams('name_item_element');
+        $request->data();
+        $request->data('name_item_element');
+        $request->body();
+        $request->contentType();
+        $request->headers();
+        $request->headers('name_item_element');
 }
 ```
 Next, you treat them as you need.

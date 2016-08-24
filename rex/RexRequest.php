@@ -7,82 +7,86 @@ class RexRequest {
 	private $params;
 	private $query;
 	private $data;
+	private $body;
 
-    /**
-     * Request constructor.
-     * @param $params
-     * @param $query
-     * @param $data
-     */
-    public function __construct($params, $query, $data) {
-        $this->params = $params;
-        $this->query = $query;
-        $this->data = $data;
-    }
-    
-    /**
-     * @return mixed
-     */
-    public function getParamsArray() {
-        return $this->params;
+	/**
+	 * RexRequest constructor.
+	 * @param $params
+	 * @param $query
+	 * @param $data
+	 * @param $body
+	 * @internal param $headers
+	 * @internal param $contentType
+	 */
+	public function __construct($params, $query, $data, $body) {
+		$this->params = $params;
+		$this->query = $query;
+		$this->data = $data;
+		$this->body = $body;
+	}
+
+	/**
+	 * @param $name
+	 * @return mixed
+	 */
+	public function params($name = '') {
+		if ($name != '') {
+			return $this->params[$name];
+		}
+		return $this->params;
     }
 
 	/**
 	 * @param $name
 	 * @return mixed
 	 */
-	public function getParam($name = '') {
-		if ($name == '' && count($this->params) != 0) {
-			return $this->getFirstElement($this->params);
+	public function queryParams($name = '') {
+		if ($name != '') {
+			return $this->query[$name];
 		}
-        return $this->params[$name];
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getQueryArray() {
-        return $this->query;
+		return $this->query;
     }
 
 	/**
 	 * @param $name
 	 * @return mixed
 	 */
-	public function getQuery($name = '') {
-		if ($name == '' && count($this->query) != 0) {
-			return $this->getFirstElement($this->query);
+	public function data($name = '') {
+		if ($name != '') {
+			return $this->data[$name];
 		}
-        return $this->query[$name];
-    }
 
-    /**
-     * @return mixed
-     */
-    public function getDataArray() {
-        return $this->data;
+		return $this->data;
     }
 
 	/**
-	 * @param $name
 	 * @return mixed
 	 */
-	public function getData($name = '') {
-		if ($name == '' && count($this->data) != 0) {
-			return $this->getFirstElement($this->data);
-		}
-        return $this->data[$name];
-    }
+	public function body() {
+		return $this->body;
+	}
 
 	/**
-	 * @param $array
-	 * @return null
+	 * @return mixed
 	 */
-	private function getFirstElement($array) {
-	    foreach ($array as $key => $val) {
-		    return $val;
-	    }
+	public function contentType() {
+		return $_SERVER['CONTENT_TYPE'];
+	}
 
-	    return null;
-    }
+	/**
+	 * @param string $name
+	 * @return mixed
+	 */
+	public function headers($name = '') {
+
+		if ($name != '') {
+			return getallheaders()[$name];
+		}
+		$headers = [];
+		foreach (getallheaders() as $key => $val) {
+			array_push($headers, $key);
+		}
+
+		return $headers;
+	}
 }

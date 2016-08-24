@@ -37,10 +37,10 @@ class RexRouter {
 	 * @param $pattern
 	 * @return string
 	 *
-	 * Преобразование урл пути в регулярное выражение
+	 * Conversion URL path to regular expression
 	 */
 	private function makePattern($pattern) {
-        return '#'.str_replace('/', '\/', preg_replace('#\:\w{1,}#', '(\d{1,})', $pattern)).'#';
+        return '#'.str_replace('/', '\/', preg_replace('#\:\w{1,}#', '[A-z0-9]+', $pattern)).'($|\?.*)#';
     }
 
 	function run() {
@@ -86,7 +86,11 @@ class RexRouter {
                 $data = $this->setRequestData();
         }
 
-        $route->handle(new RexRequest($params, $this->setRequestQuery(), $data));
+        $request = new RexRequest($params,
+	        $this->setRequestQuery(),
+	        $data,
+	        $this->setRequestBody());
+        $route->handle($request);
     }
 
 	/**
@@ -119,6 +123,14 @@ class RexRouter {
             $data[$explode[0]] = $explode[1];
         }
         return $data;
+    }
+
+	/**
+	 * @return string
+	 */
+	private function setRequestBody() {
+	    if (file_get_contents('php://input') == '') return '';
+	    return file_get_contents('php://input');
     }
 
 	/**
