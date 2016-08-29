@@ -91,7 +91,7 @@ public function handle(Request $request) {
         $response->show('Your response');
         $response->show('Your response', dubug_flag(bool));
         {
-            ~~echo 'Your response';~~
+            echo 'Your response';             //No need to use echo
             $response->show('Your response'); //need use method show()
         }
         $response->setSession('name', 'value');
