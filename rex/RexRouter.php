@@ -4,11 +4,11 @@ namespace rex;
 
 use Exception;
 use rex\utils\RexException;
+use rex\utils\Server;
 
 
 class RexRouter {
     private $routes = [];
-    private $method = '';
 
 	/**
 	 * @param $method - http method
@@ -16,8 +16,7 @@ class RexRouter {
 	 * @param $handler - YourClass::class
 	 */
 	function setInterfaces($method, $pattern, $handler) {
-        $this->method = $method;
-        $this->makeArray();
+        $this->makeArray($method);
         array_push($this->routes[$method],
 	        ['pattern'   => $pattern,
             'class'     => $handler]
@@ -25,11 +24,11 @@ class RexRouter {
     }
 
 	/**
-	 *
+	 * @param $method
 	 */
-	private function makeArray() {
-        if (!array_key_exists($this->method, $this->routes)) {
-            $this->routes[$this->method] = [];
+	private function makeArray($method) {
+        if (!array_key_exists($method, $this->routes)) {
+            $this->routes[$method] = [];
         }
     }
 
@@ -44,8 +43,13 @@ class RexRouter {
     }
 
 	function run() {
-        $url_path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        foreach ($this->routes[$_SERVER['REQUEST_METHOD']] as $map) {
+        $url_path = parse_url(Server::requestUri(), PHP_URL_PATH);
+
+		if (!array_key_exists(Server::requestMethod(), $this->routes)) {
+			$this->showError($url_path);
+		}
+
+        foreach ($this->routes[Server::requestMethod()] as $map) {
             if (preg_match($this->makePattern($map['pattern']), $url_path, $matches)) {
                 $this->setParams(
                     new $map['class'](),
@@ -55,13 +59,7 @@ class RexRouter {
 
                 break;
             } else {
-
-	            echo json_encode(array(
-	            	'error' => 1,
-		            'message' => 'Данный интерфейс не найден!',
-		            'interface' => $url_path
-	            ));
-	            return;
+	            $this->showError($url_path);
             }
         }
     }
@@ -77,7 +75,7 @@ class RexRouter {
             $params[$val] = $values[$key];
         }
         $data = null;
-        switch ($this->method) {
+        switch (Server::requestMethod()) {
             case 'POST': {
                 $data = $_POST;
                 break;
@@ -97,9 +95,9 @@ class RexRouter {
 	 * @return array
 	 */
 	private function setRequestQuery() {
-        if ($_SERVER['QUERY_STRING'] == '') return [];
+        if (Server::queryString() == '') return [];
 
-        $dataArray = explode('&', $_SERVER['QUERY_STRING']);
+        $dataArray = explode('&', Server::queryString());
         $data = [];
         foreach ($dataArray as $key => $val) {
             $explode = explode('=', $val);
@@ -165,5 +163,15 @@ class RexRouter {
         }
 
         RexException::showException('Unable to get data from the url!');
+    }
+
+    private function showError($url_path) {
+	    echo json_encode(array(
+		    'error' => 1,
+		    'message' => 'Данный интерфейс не найден!',
+		    'interface' => $url_path,
+		    'http method' => Server::requestMethod()
+	    ));
+	    die();
     }
 }
