@@ -88,7 +88,7 @@ class RexRouter {
 	        $this->setRequestQuery(),
 	        $data,
 	        $this->setRequestBody());
-        $route->handle($request);
+        $route->handle(new RexResponse(), $request);
     }
 
 	/**
@@ -166,12 +166,11 @@ class RexRouter {
     }
 
     private function showError($url_path) {
-	    echo json_encode(array(
+	    exit(json_encode(array(
 		    'error' => 1,
 		    'message' => 'Данный интерфейс не найден!',
 		    'interface' => $url_path,
 		    'http method' => Server::requestMethod()
-	    ));
-	    die();
+	    )));
     }
 }

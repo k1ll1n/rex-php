@@ -12,7 +12,7 @@ RexBuilder::collector([
 Treatment YourClass
 ```PHP
 class YourClass implements RexHandlerInterface {
-    public function handle(RexRequest $request) {
+    public function handle(RexResponse $response, RexRequest $request) {
         //your code
     }
 }
@@ -40,13 +40,11 @@ RexBuilder::collector([
 use rex\RexHandlerInterface;
 use rex\RexRequest;
 
-require_once 'rex/utils/RexClassLoader.php';
-
 class User implements RexHandlerInterface {
     
-    public function handle(RexRequest $request) {
-        var_dump($request);
-        var_dump($request->getQuery('foo'));
+    public function handle(RexResponse $response, RexRequest $request) {
+        $response->show($request, true); //with debug mode
+        $response->show($request->getQuery('foo')); //without debug mode
     }
 }
 ```
@@ -69,11 +67,14 @@ object(rex\RexRequest)#3 (3) {
   array(0) {
   }
 }
-string(3) "bar"
+
+bar
 ```
 Retrieving data
 ```PHP
 public function handle(Request $request) {
+
+        /*REQUEST*/
         $request->params();
         $request->params('name_item_element');
         $request->queryParams();
@@ -84,6 +85,21 @@ public function handle(Request $request) {
         $request->contentType();
         $request->headers();
         $request->headers('name_item_element');
+        /*END*/
+        
+        /*RESPONSE*/
+        $response->show('Your response');
+        $response->show('Your response', dubug_flag(bool));
+        {
+            ~~echo 'Your response';~~
+            $response->show('Your response'); //need use method show()
+        }
+        $response->setSession('name', 'value');
+        $response->unsetSession('name');
+        $response->destroySession();
+        $response->getSession();
+        $response->getSession('name_item_element');
+        /*END*/
 }
 ```
 Next, you treat them as you need.
