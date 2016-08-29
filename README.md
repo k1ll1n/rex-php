@@ -89,7 +89,7 @@ public function handle(Request $request) {
         
         /*RESPONSE*/
         $response->show('Your response');
-        $response->show('Your response', dubug_flag(bool));
+        $response->show('Your response', dubug[true | false {default false}]);
         {
             echo 'Your response';             //No need to use echo
             $response->show('Your response'); //need use method show()
