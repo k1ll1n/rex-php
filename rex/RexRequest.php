@@ -52,11 +52,12 @@ class RexRequest {
 	 * @return mixed
 	 */
 	public function data($name = '') {
-		if ($name != '') {
-			return $this->data[$name];
+		$data = ($this->data == '') ? $this->setRequestData() : $this->data;
+		if ($name != '' && count($data) > 0) {
+			return $data[$name];
 		}
 
-		return $this->data;
+		return $data;
     }
 
 	/**
@@ -88,5 +89,17 @@ class RexRequest {
 		}
 
 		return $headers;
+	}
+
+	/**
+	 * @return array
+	 *
+	 * Processing other http methods, which do not have their own global variables such as PUT, DELETE, etc.
+	 */
+	private function setRequestData() {
+		$raw_input = file_get_contents('php://input');
+		if ($raw_input == '') return [];
+		parse_str($raw_input, $data);
+		return $data;
 	}
 }

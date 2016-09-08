@@ -81,13 +81,15 @@ class RexRouter {
                 break;
             }
             default:
-                $data = $this->setRequestData();
+                $data = '';
         }
 
-        $request = new RexRequest($params,
+        $request = new RexRequest(
+        	$params,
 	        $this->setRequestQuery(),
 	        $data,
-	        $this->setRequestBody());
+	        $this->setRequestBody()
+        );
         $route->handle(new RexResponse(), $request);
     }
 
@@ -98,23 +100,6 @@ class RexRouter {
         if (Server::queryString() == '') return [];
 
         $dataArray = explode('&', Server::queryString());
-        $data = [];
-        foreach ($dataArray as $key => $val) {
-            $explode = explode('=', $val);
-            $data[$explode[0]] = $explode[1];
-        }
-        return $data;
-    }
-
-	/**
-	 * @return array
-	 *
-	 * Processing other http methods, which do not have their own global variables such as PUT, DELETE, etc.
-	 */
-	private function setRequestData() {
-        if (file_get_contents('php://input') == '') return [];
-
-        $dataArray = explode('&', file_get_contents('php://input'));
         $data = [];
         foreach ($dataArray as $key => $val) {
             $explode = explode('=', $val);

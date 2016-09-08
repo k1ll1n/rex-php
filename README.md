@@ -1,11 +1,12 @@
 Rex PHP simple framework for REST
+--------
 
 Simple use!
 
 Creating interfaces
 ```PHP
 RexBuilder::collector([
-	'HTTP_METHOD|PATH' => YourClass::class
+	'HTTP_METHOD:PATH' => YourClass::class
 ]);
 ```
 
@@ -31,7 +32,7 @@ require_once 'rex/utils/RexClassLoader.php';
 require_once 'App/routes/User.php';
 
 RexBuilder::collector([
-	'GET|/users/:groupId/user/:userId' => User::class
+	'GET:/users/:groupId/user/:userId' => User::class
 ]);
 ```
 ```PHP
@@ -91,15 +92,42 @@ public function handle(Request $request) {
         $response->show('Your response');
         $response->show('Your response', dubug[true | false {default false}]);
         {
-            echo 'Your response';             //No need to use echo
-            $response->show('Your response'); //need use method show()
+            echo 'Your response content';             //No need to use echo
+            $response->show('Your response content'); //Need use method show()
         }
         $response->setSession('name', 'value');
         $response->unsetSession('name');
-        $response->destroySession();
+        $response->destroySession(); //kill all variables in current session
         $response->getSession();
         $response->getSession('name_item_element');
+        $response->cookie(RexCookie::object);
+        $response->destroyCookie('name_item_element');
+        $response->destroyCookie();//kill all variables in cookie
+        Cookie {
+            $cookie1 = new RexCookie('name', 'value');
+            $cookie1->setDomain();
+            $cookie1->setHttpOnly(1 | 0);
+            $cookie1->setPath();
+            $cookie1->setSecure(1 | 0);
+            $cookie1->setOtherExpiryTime();
+            $cookie1->addHour();
+            $cookie1->addDay();
+            $cookie1->addMonth();
+            $cookie1->addYear();
+            $response->cookie($cookie1);
+            
+            //How many times...
+            $cookie2 = new RexCookie('name', 'value');
+            $response->cookie($cookie2);
+            $cookie222 = new RexCookie('name', 'value');
+            $response->cookie($cookie222);
+        }
+        
         /*END*/
 }
 ```
 Next, you treat them as you need.
+
+Special Thanks
+--------------
+[Cra3y](https://github.com/max-dark)

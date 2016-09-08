@@ -18,10 +18,8 @@ class RexBuilder {
 		$router = new RexRouter();
 
         foreach ($array as $key => $val) {
-	        if (!strpos($key, '|') !== false) RexException::showException('You must specify the http method and divide it by a vertical bar on the URL path!');
-        	$split = explode('|', $key);
-
-	        $router->setInterfaces($split[0], $split[1], $val);
+        	list($method, $url) = explode(':', $key, 2);
+	        $router->setInterfaces($method, $url, $val);
         }
 		$router->run();
     }
