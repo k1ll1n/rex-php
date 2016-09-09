@@ -10,44 +10,44 @@ use rex\utils\Server;
 class RexRouter {
     private $routes = [];
 
-	/**
-	 * @param $method - http method
-	 * @param $pattern - special format url path
-	 * @param $handler - YourClass::class
-	 */
-	function setInterfaces($method, $pattern, $handler) {
+    /**
+     * @param $method - http method
+     * @param $pattern - special format url path
+     * @param $handler - YourClass::class
+     */
+    function setInterfaces($method, $pattern, $handler) {
         $this->makeArray($method);
         array_push($this->routes[$method],
-	        ['pattern'   => $pattern,
-            'class'     => $handler]
+            ['pattern' => $pattern,
+                'class' => $handler]
         );
     }
 
-	/**
-	 * @param $method
-	 */
-	private function makeArray($method) {
+    /**
+     * @param $method
+     */
+    private function makeArray($method) {
         if (!array_key_exists($method, $this->routes)) {
             $this->routes[$method] = [];
         }
     }
 
-	/**
-	 * @param $pattern
-	 * @return string
-	 *
-	 * Conversion URL path to regular expression
-	 */
-	private function makePattern($pattern) {
-        return '#'.str_replace('/', '\/', preg_replace('#\:\w{1,}#', '[A-z0-9]+', $pattern)).'($|\?.*)#';
+    /**
+     * @param $pattern
+     * @return string
+     *
+     * Conversion URL path to regular expression
+     */
+    private function makePattern($pattern) {
+        return '#' . str_replace('/', '\/', preg_replace('#\:\w{1,}#', '[A-z0-9]+', $pattern)) . '($|\?.*)#';
     }
 
-	function run() {
+    function run() {
         $url_path = parse_url(Server::requestUri(), PHP_URL_PATH);
 
-		if (!array_key_exists(Server::requestMethod(), $this->routes)) {
-			$this->showError($url_path);
-		}
+        if (!array_key_exists(Server::requestMethod(), $this->routes)) {
+            $this->showError($url_path);
+        }
 
         foreach ($this->routes[Server::requestMethod()] as $map) {
             if (preg_match($this->makePattern($map['pattern']), $url_path, $matches)) {
@@ -59,17 +59,17 @@ class RexRouter {
 
                 break;
             } else {
-	            $this->showError($url_path);
+                $this->showError($url_path);
             }
         }
     }
 
-	/**
-	 * @param RexHandlerInterface $route
-	 * @param $variables
-	 * @param $values
-	 */
-	private function setParams(RexHandlerInterface $route, $variables, $values) {
+    /**
+     * @param RexHandlerInterface $route
+     * @param $variables
+     * @param $values
+     */
+    private function setParams(RexHandlerInterface $route, $variables, $values) {
         $params = [];
         foreach ($variables as $key => $val) {
             $params[$val] = $values[$key];
@@ -85,18 +85,18 @@ class RexRouter {
         }
 
         $request = new RexRequest(
-        	$params,
-	        $this->setRequestQuery(),
-	        $data,
-	        $this->setRequestBody()
+            $params,
+            $this->setRequestQuery(),
+            $data,
+            $this->setRequestBody()
         );
         $route->handle(new RexResponse(), $request);
     }
 
-	/**
-	 * @return array
-	 */
-	private function setRequestQuery() {
+    /**
+     * @return array
+     */
+    private function setRequestQuery() {
         if (Server::queryString() == '') return [];
 
         $dataArray = explode('&', Server::queryString());
@@ -108,23 +108,23 @@ class RexRouter {
         return $data;
     }
 
-	/**
-	 * @return string
-	 */
-	private function setRequestBody() {
-	    if (file_get_contents('php://input') == '') return '';
-	    return file_get_contents('php://input');
+    /**
+     * @return string
+     */
+    private function setRequestBody() {
+        if (file_get_contents('php://input') == '') return '';
+        return file_get_contents('php://input');
     }
 
-	/**
-	 * @param $pattern
-	 * @return mixed
-	 * @throws Exception
-	 */
-	private function getVariables($pattern) {
+    /**
+     * @param $pattern
+     * @return mixed
+     * @throws Exception
+     */
+    private function getVariables($pattern) {
         $template = preg_replace('#\:\w{1,}#', '(\:\w{1,})', $pattern);
         $template = str_replace('/', '\/', $template);
-        $template = '#'.$template.'#';
+        $template = '#' . $template . '#';
         if (preg_match($template, $pattern, $matches)) {
             array_shift($matches);
             return str_replace(':', '', $matches);
@@ -132,16 +132,16 @@ class RexRouter {
         RexException::showException('Unable to get variables from a pattern!');
     }
 
-	/**
-	 * @param $url
-	 * @param $pattern
-	 * @return mixed
-	 * @throws Exception
-	 */
-	private function getValues($url, $pattern) {
+    /**
+     * @param $url
+     * @param $pattern
+     * @return mixed
+     * @throws Exception
+     */
+    private function getValues($url, $pattern) {
         $pattern = preg_replace('#\:\w{1,}#', '(\d{1,})', $pattern);
         $pattern = str_replace('/', '\/', $pattern);
-        $pattern = '#'.$pattern.'#';
+        $pattern = '#' . $pattern . '#';
         if (preg_match($pattern, $url, $matches)) {
             array_shift($matches);
             return $matches;
@@ -151,11 +151,11 @@ class RexRouter {
     }
 
     private function showError($url_path) {
-	    exit(json_encode(array(
-		    'error' => 1,
-		    'message' => 'Данный интерфейс не найден!',
-		    'interface' => $url_path,
-		    'http method' => Server::requestMethod()
-	    )));
+        exit(json_encode(array(
+            'error' => 1,
+            'message' => 'Данный интерфейс не найден!',
+            'interface' => $url_path,
+            'http method' => Server::requestMethod()
+        )));
     }
 }
