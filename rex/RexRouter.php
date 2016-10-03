@@ -3,8 +3,10 @@
 namespace rex;
 
 use Exception;
-use rex\utils\RexException;
+use rex\utils\RexError;
 use rex\utils\Server;
+
+require_once 'utils/RexClassLoader.php';
 
 
 class RexRouter {
@@ -45,9 +47,14 @@ class RexRouter {
     function run() {
         $url_path = parse_url(Server::requestUri(), PHP_URL_PATH);
 
-        if (!array_key_exists(Server::requestMethod(), $this->routes)) {
-            $this->showError($url_path);
-        }
+        /*if (!array_key_exists(Server::requestMethod(), $this->routes)) { //TODO Протестировать на необходимость данной проверки.
+            RexError::showError([
+                'error' => 1,
+                'message' => 'Не обнаружен интерфейс с таким методом!',
+                'interface' => $url_path,
+                'http method' => Server::requestMethod()
+            ]);
+        }*/
 
         foreach ($this->routes[Server::requestMethod()] as $map) {
             if (preg_match($this->makePattern($map['pattern']), $url_path, $matches)) {
@@ -59,7 +66,11 @@ class RexRouter {
 
                 break;
             } else {
-                $this->showError($url_path);
+                RexError::showError([
+                    'message' => 'Данный URL Path не удалось сопоставить ни с одним зарегистрированным интерфейсом!',
+                    'interface' => $url_path,
+                    'http method' => Server::requestMethod()
+                ]);
             }
         }
     }
@@ -71,9 +82,12 @@ class RexRouter {
      */
     private function setParams(RexHandlerInterface $route, $variables, $values) {
         $params = [];
-        foreach ($variables as $key => $val) {
-            $params[$val] = $values[$key];
+        if (count($variables) > 0 && count($values) > 0) {
+            foreach ($variables as $key => $val) {
+                $params[$val] = $values[$key];
+            }
         }
+
         $data = null;
         switch (Server::requestMethod()) {
             case 'POST': {
@@ -122,14 +136,13 @@ class RexRouter {
      * @throws Exception
      */
     private function getVariables($pattern) {
-        $template = preg_replace('#\:\w{1,}#', '(\:\w{1,})', $pattern);
-        $template = str_replace('/', '\/', $template);
-        $template = '#' . $template . '#';
+        $template = '#' . str_replace('/', '\/', preg_replace('#\:\w{1,}#', '(\:\w{1,})', $pattern)) . '#';
         if (preg_match($template, $pattern, $matches)) {
             array_shift($matches);
             return str_replace(':', '', $matches);
         }
-        RexException::showException('Unable to get variables from a pattern!');
+
+        return [];
     }
 
     /**
@@ -139,23 +152,12 @@ class RexRouter {
      * @throws Exception
      */
     private function getValues($url, $pattern) {
-        $pattern = preg_replace('#\:\w{1,}#', '(\d{1,})', $pattern);
-        $pattern = str_replace('/', '\/', $pattern);
-        $pattern = '#' . $pattern . '#';
+        $pattern = '#' . str_replace('/', '\/', preg_replace('#\:\w{1,}#', '(\d{1,})', $pattern)) . '#';
         if (preg_match($pattern, $url, $matches)) {
             array_shift($matches);
             return $matches;
         }
 
-        RexException::showException('Unable to get data from the url!');
-    }
-
-    private function showError($url_path) {
-        exit(json_encode(array(
-            'error' => 1,
-            'message' => 'Данный интерфейс не найден!',
-            'interface' => $url_path,
-            'http method' => Server::requestMethod()
-        )));
+        return [];
     }
 }

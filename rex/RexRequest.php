@@ -27,10 +27,10 @@ class RexRequest {
 
     /**
      * @param $name
-     * @return mixed
+     * @return array
      */
     public function params($name = '') {
-        if ($name != '') {
+        if ($name != '' && count($this->params) > 0) {
             return $this->params[$name];
         }
         return $this->params;
@@ -38,10 +38,10 @@ class RexRequest {
 
     /**
      * @param $name
-     * @return mixed
+     * @return array
      */
     public function queryParams($name = '') {
-        if ($name != '') {
+        if ($name != '' && count($this->query) > 0) {
             return $this->query[$name];
         }
         return $this->query;
@@ -49,7 +49,7 @@ class RexRequest {
 
     /**
      * @param $name
-     * @return mixed
+     * @return array
      */
     public function data($name = '') {
         $data = ($this->data == '') ? $this->setRequestData() : $this->data;
@@ -68,7 +68,7 @@ class RexRequest {
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function contentType() {
         return $_SERVER['CONTENT_TYPE'];

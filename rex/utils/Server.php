@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: madlax
- * Date: 29.08.16
- * Time: 15:27
- */
 
 namespace rex\utils;
 

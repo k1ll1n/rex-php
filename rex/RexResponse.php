@@ -4,6 +4,7 @@ namespace rex;
 
 use ReflectionClass;
 use rex\models\RexCookie;
+use rex\utils\RexError;
 
 
 class RexResponse {
@@ -67,7 +68,7 @@ class RexResponse {
         if (session_status() == 0 or session_status() == 1) {
             session_start();
         };
-        if ($name != '') {
+        if ($name != '' && count($_SESSION) > 0) {
             return $_SESSION[$name];
         }
 
@@ -136,11 +137,11 @@ class RexResponse {
         }
 
         if (count($this->failUnsetSessionVar) > 0) {
-            exit(json_encode(array(
+            RexError::showError([
                 'error' => 2,
                 'message' => 'Следующие переменные не обнаружены в данной сессии',
                 'variables' => $this->failUnsetSessionVar
-            )));
+            ]);
         }
     }
 
